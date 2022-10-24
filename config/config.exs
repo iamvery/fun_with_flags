@@ -28,6 +28,13 @@ with_ecto =
     _      -> false # default
   end
 
+with_redis_config =
+  case System.get_env("REDIS_CONFIG_STYLE") do
+    "uri"   -> "redis://localhost"
+    "tuple" -> {"redis://localhost", []}
+    _       -> nil
+  end
+
 
 # -------------------------------------------------
 # Configuration
@@ -73,6 +80,13 @@ if with_ecto do
         username: "postgres",
         password: "postgres"
   end
+end
+
+if with_redis_config do
+  IO.puts("** REDIS CONFIG **")
+  IO.inspect(with_redis_config)
+  IO.puts("** /END **")
+  config :fun_with_flags, :redis, with_redis_config
 end
 
 # -------------------------------------------------

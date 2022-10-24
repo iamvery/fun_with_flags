@@ -70,12 +70,17 @@ defmodule FunWithFlags.Notifications.Redis do
   # The unique_id will become the state of the GenServer
   #
   def init(unique_id) do
+    Application.get_env(:fun_with_flags, :redis) |> IO.inspect
+    IO.inspect(Config.redis_config)
     {:ok, _pid} = case Config.redis_config do
       uri when is_binary(uri) ->
+        IO.puts("** FIRST **")
         Redix.PubSub.start_link(uri, @conn_options)
       {uri, opts} when is_binary(uri) and is_list(opts) ->
+        IO.puts("** SECOND **")
         Redix.PubSub.start_link(uri, Keyword.merge(opts, @conn_options))
       opts when is_list(opts) ->
+        IO.puts("** THIRD **")
         Redix.PubSub.start_link(Keyword.merge(opts, @conn_options))
     end
 

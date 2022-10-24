@@ -85,7 +85,7 @@ defmodule FunWithFlags.Mixfile do
       {:"test.phx", [&run_tests__redis_pers__phoenix_pubsub/1]},
       {:"test.ecto.postgres", [&run_tests__ecto_pers_postgres__phoenix_pubsub/1]},
       {:"test.ecto.mysql", [&run_tests__ecto_pers_mysql__phoenix_pubsub/1]},
-      {:"test.redis", [&run_tests__redis_pers__redis_pubsub/1]},
+      {:"test.redis", [&run_tests__redis_pers__redis_pubsub/1, &run_tests__redis_pers__redis_pubsub__uri_config/1, &run_tests__redis_pers__redis_pubsub__tuple_config/1]},
     ]
   end
 
@@ -98,6 +98,7 @@ defmodule FunWithFlags.Mixfile do
       &run_tests__redis_pers__phoenix_pubsub/1, &run_integration_tests__redis_pers__phoenix_pubsub__no_cache/1,
       &run_tests__ecto_pers_postgres__phoenix_pubsub/1, &run_integration_tests__ecto_pers_postgres__phoenix_pubsub__no_cache/1,
       &run_tests__ecto_pers_mysql__phoenix_pubsub/1, &run_integration_tests__ecto_pers_mysql__phoenix_pubsub__no_cache/1,
+      &run_tests__redis_pers__redis_pubsub__uri_config/1, &run_tests__redis_pers__redis_pubsub__tuple_config/1
     ]
 
     exit_codes = case System.get_env("CI") do
@@ -137,11 +138,45 @@ defmodule FunWithFlags.Mixfile do
   #
   # Cache enabled, force re-compilation.
   #
+  # Default config.
+  #
   defp run_tests__redis_pers__redis_pubsub(arg) do
     Mix.shell.cmd(
       "mix test --color --force --exclude phoenix_pubsub --exclude ecto_persistence #{arg}",
       env: [
         {"CACHE_ENABLED", "true"},
+      ]
+    )
+  end
+
+  # Run the tests with Redis as persistent store and Redis PubSub as broker.
+  #
+  # Cache enabled, force re-compilation.
+  #
+  # URI config.
+  #
+  defp run_tests__redis_pers__redis_pubsub__uri_config(arg) do
+    Mix.shell.cmd(
+      "mix test --color --force --exclude phoenix_pubsub --exclude ecto_persistence #{arg}",
+      env: [
+        {"CACHE_ENABLED", "true"},
+        {"REDIS_CONFIG_STYLE", "uri"},
+      ]
+    )
+  end
+
+  # Run the tests with Redis as persistent store and Redis PubSub as broker.
+  #
+  # Cache enabled, force re-compilation.
+  #
+  # Tuple config.
+  #
+  defp run_tests__redis_pers__redis_pubsub__tuple_config(arg) do
+    Mix.shell.cmd(
+      "mix test --color --force --exclude phoenix_pubsub --exclude ecto_persistence #{arg}",
+      env: [
+        {"CACHE_ENABLED", "true"},
+        {"REDIS_CONFIG_STYLE", "tuple"},
       ]
     )
   end
